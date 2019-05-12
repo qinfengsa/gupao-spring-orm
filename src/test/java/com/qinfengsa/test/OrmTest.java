@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * ORM测试
  * @author: qinfengsa
  * @date: 2019/5/12 10:27
  */
@@ -30,6 +31,9 @@ public class OrmTest {
     private MerberDao memberDao;
 
 
+    /**
+     * 查询测试
+     */
     @Test
     public void testSelectMember(){
         try {
@@ -44,6 +48,9 @@ public class OrmTest {
         }
     }
 
+    /**
+     * 查询测试
+     */
     @Test
     public void testSelectOneMember(){
         try {
@@ -57,6 +64,9 @@ public class OrmTest {
         }
     }
 
+    /**
+     * 插入测试
+     */
     @Test
     public void testInsertMember(){
         try {
@@ -71,12 +81,16 @@ public class OrmTest {
         }
     }
 
+    /**
+     * 更新测试
+     */
     @Test
     public void testUpdateMember(){
         try {
             Member member = new Member();
+            member.setId(3L);
             member.setAge(19);
-            member.setName("赵云");
+            member.setName("赵云2");
             member.setAddr("常山");
             boolean result = memberDao.update(member);
             log.debug("result:{}",result);
@@ -84,13 +98,15 @@ public class OrmTest {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 删除测试
+     */
     @Test
     public void testDeleteMember(){
         try {
             Member member = new Member();
-            member.setAge(19);
-            member.setName("赵云");
-            member.setAddr("常山");
+            member.setId(3L);
             boolean result = memberDao.delete(member);
             log.debug("result:{}",result);
         } catch (Exception e) {

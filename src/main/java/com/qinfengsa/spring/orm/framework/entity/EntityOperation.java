@@ -16,6 +16,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -74,27 +75,29 @@ public class EntityOperation<T extends Serializable> {
         this.mappings = getPropertyMappings(getters, setters, fields);
         this.allColumn = this.mappings.keySet().toString().replace("[", "").replace("]","").replaceAll(" ","");
         this.rowMapper = createRowMapper();
-        this.pkField = getPkField(fields);
-        if (Objects.isNull(this.pkField )) {
-            throw new Exception("在" + clazz.getName() + "中没有找到Id注解，无法映射主键");
-        }
+
+        getPkField(fields,clazz.getName());
+
 
     }
 
     /**
-     * 获取主机
+     * 获取主键
      * @param fields
-     * @return
+     * @param className
+     * @throws Exception
      */
-    private Field getPkField(Field[] fields) {
-
+    private void getPkField(Field[] fields,String className) throws Exception{
         for (Field field : fields) {
             if (field.isAnnotationPresent(Id.class)) {
-                return  field;
+                this.pkField =  field;
             }
 
         }
-        return null;
+        if (Objects.isNull(this.pkField)) {
+            throw new Exception("在" + className + "中没有找到Id注解，无法映射主键");
+        }
+        this.pkField.setAccessible(true);
     }
 
     Map<String, PropertyMapping> getPropertyMappings(Map<String, Method> getters, Map<String, Method> setters, Field[] fields) {
@@ -161,7 +164,8 @@ public class EntityOperation<T extends Serializable> {
     }
 
     public Map<String, Object> parse(T t) {
-        Map<String, Object> columnMap = new TreeMap<String, Object>();
+        // 修改为有序Map(先入先出)
+        Map<String, Object> columnMap = new LinkedHashMap<String, Object>();
         try {
 
             for (String columnName : mappings.keySet()) {

@@ -189,8 +189,9 @@ public abstract class BaseDaoImpl<T extends Serializable> implements BaseDao<T> 
     }
 
     private int doUpdate(Object pkValue, Map<String,Object> params) {
+        params.remove(this.pkColumn);
         String sql = this.getUpdateSql( params);
-
+        // LinkedHashMap 是有序的，需要删除主键，然后添加，保证主键在最后
         params.put(pkColumn,pkValue);
         int result = this.jdbcTemplate.update(sql, params.values().toArray());
         return result;
@@ -207,11 +208,11 @@ public abstract class BaseDaoImpl<T extends Serializable> implements BaseDao<T> 
             if (index > 0) {
                 sql.append(",");
             }
-            sql.append(key).append(" = :").append(key);
+            sql.append(key).append(" = ?");
 
             index++;
         }
-        sql.append(" WHERE ").append(pkColumn).append(" =:").append(pkColumn);
+        sql.append(" WHERE ").append(pkColumn).append(" = ?") ;
         return sql.toString();
     }
 

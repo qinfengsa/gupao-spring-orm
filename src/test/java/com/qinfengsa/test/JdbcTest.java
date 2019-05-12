@@ -44,6 +44,7 @@ public class JdbcTest {
             connection = DriverManager.getConnection("jdbc:mysql://192.168.7.11:3306/test","root","123456");
             // 3、创建语句集
             statement = connection.prepareStatement(sql);
+
             // 4、执行语句集
             rs = statement.executeQuery();
             while (rs.next()) {
@@ -80,6 +81,12 @@ public class JdbcTest {
 
         }
         return result;
+    }
+
+
+    @Test
+    public void select() {
+        String sql = "select * from t_member where id = 1";
     }
 
 }
